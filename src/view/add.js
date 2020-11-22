@@ -168,5 +168,5 @@ export const createTripAddEventTemplate = () => {
               </form>
 </li>
 </ul>
-`
+`;
 };

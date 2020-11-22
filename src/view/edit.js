@@ -196,5 +196,5 @@ export const createTripEditEventTemplate = () => {
       </section>
     </section>
   </form>
-</li>`
+</li>`;
 };

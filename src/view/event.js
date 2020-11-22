@@ -35,5 +35,5 @@ export const createTripEventTemplate = () => {
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
-  </li>`
+  </li>`;
 };
