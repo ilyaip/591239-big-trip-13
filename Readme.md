@@ -1,7 +1,7 @@
 # Проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Илья Ипаткин](https://up.htmlacademy.ru/ecmascript/13/user/591239).
-* Наставник: `Неизвестно`.
+* Наставник: [Саша Джинн] (https://htmlacademy.ru/profile/jinonensk).
 
 ---
 
