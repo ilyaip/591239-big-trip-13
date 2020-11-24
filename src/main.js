@@ -14,7 +14,7 @@ const render = (container, template, place) => {
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteInfoElement = siteHeaderElement.querySelector(`.trip-main`);
-
+ 
 render(siteInfoElement, createTripInfoTemplate(), `afterbegin`);
 
 const siteTripControlsElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
