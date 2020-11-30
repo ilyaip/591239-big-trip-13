@@ -18,3 +18,4 @@ export const createTripFiltersTemplate = () => {
   <button class="visually-hidden" type="submit">Accept filter</button>
 </form>`;
 };
+
