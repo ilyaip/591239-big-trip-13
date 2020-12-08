@@ -1,5 +1,6 @@
-export const createTripAddEventTemplate = (point = {}) => {
-  const {description, photos} = point;
+import {createElement} from "../utils.js";
+
+const createTripAddEventTemplate = ({description, photos}) => {
 
   const createPhotos = () => {
     const photosArray = [];
@@ -9,8 +10,7 @@ export const createTripAddEventTemplate = (point = {}) => {
     return photosArray.join(``);
   };
 
-  return `<ul class="trip-events__list">
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
@@ -173,6 +173,29 @@ export const createTripAddEventTemplate = (point = {}) => {
                 </section>
               </form>
 </li>
-</ul>
 `;
 };
+
+export default class SiteEventAddView {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripAddEventTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

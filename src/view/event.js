@@ -1,14 +1,8 @@
-export const createTripEventTemplate = (point) => {
-  const {typePoints, city, offers, isFavorite, price} = point;
+import {getRandomInteger, createElement} from "../utils.js";
+
+const createTripEventTemplate = ({typePoints, city, offers, isFavorite, price}) => {
 
   const isFavoriteIcon = isFavorite ? `event__favorite-btn--active` : ``;
-
-  const getRandomInteger = (a = 0, b = 1) => {
-    const lower = Math.ceil(Math.min(a, b));
-    const upper = Math.floor(Math.max(a, b));
-
-    return Math.floor(lower + Math.random() * (upper - lower + 1));
-  };
 
   // const randomIndex = getRandomInteger(0, offers.length - 1);
 
@@ -59,3 +53,27 @@ export const createTripEventTemplate = (point) => {
     </div>
   </li>`;
 };
+
+export default class SiteEventView {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
