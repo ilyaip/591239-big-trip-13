@@ -6,10 +6,11 @@ import SiteEventListView from "./view/event-list.js";
 // import SiteEventAddView from "./view/add.js";
 import SiteEventEditView from "./view/edit.js";
 import SiteEventView from "./view/event.js";
+import NoPointView from "./view/no-point.js";
 import {generatePoint} from "./mock/point.js";
 import {render, RenderPosition} from "./utils.js";
 
-const EVENT_COUNT = 20;
+const EVENT_COUNT = 10;
 
 const points = new Array(EVENT_COUNT).fill().map(generatePoint);
 
@@ -28,13 +29,23 @@ const renderPoint = (eventListElement, point) => {
     eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceEditToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceEditToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   eventEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
@@ -53,18 +64,27 @@ render(siteMenuElement, new SiteMenuView().getElement(), RenderPosition.AFTEREND
 render(siteTripControlsElement, new SiteFilterView().getElement(), RenderPosition.BEFOREEND);
 
 const siteMainElement = document.querySelector(`main`);
-const siteSortElement = siteMainElement.querySelector(`.trip-events`);
+const siteBoardElement = siteMainElement.querySelector(`.trip-events`);
 
-const SiteEventList = new SiteEventListView();
-render(siteSortElement, new SiteSortView().getElement(), RenderPosition.BEFOREEND);
-render(siteSortElement, SiteEventList.getElement(), RenderPosition.BEFOREEND);
+const renderBoard = (boardContainer, boardEvents) => {
+  const SiteEventList = new SiteEventListView();
+
+  render(boardContainer, SiteEventList.getElement(), RenderPosition.BEFOREEND);
+
+  points.forEach((boardEvent) => renderPoint(SiteEventList.getElement(), boardEvent));
+
+  if (boardEvents.length === 0) {
+    render(SiteEventList.getElement(), new NoPointView().getElement(), RenderPosition.BEFOREEND);
+  } else {
+    render(SiteEventList.getElement(), new SiteSortView().getElement(), RenderPosition.BEFOREEND);
+  }
+
+
+};
+
+renderBoard(siteBoardElement, points);
+
 // render(SiteEventList.getElement(), new SiteEventAddView(points[0]).getElement(), RenderPosition.BEFOREEND);
 
 // render(siteEventListElement, new SiteEventEditView(points[0]).getElement(), RenderPosition.BEFOREEND);
-
-
-for (let i = 0; i < EVENT_COUNT; i++) {
-  renderPoint(SiteEventList.getElement(), points[i]);
-}
-
 
