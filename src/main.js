@@ -1,44 +1,70 @@
-import {createTripInfoTemplate} from "./view/trip-info.js";
-import {createTripMenuTemplate} from "./view/menu.js";
-import {createTripFiltersTemplate} from "./view/filters.js";
-import {createTripSortTemplate} from "./view/sort.js";
-import {createTripAddEventTemplate} from "./view/add.js";
-import {createTripEditEventTemplate} from "./view/edit.js";
-import {createTripEventTemplate} from "./view/event.js";
+import SiteInfoView from "./view/trip-info.js";
+import SiteMenuView from "./view/menu.js";
+import SiteFilterView from "./view/filters.js";
+import SiteSortView from "./view/sort.js";
+import SiteEventListView from "./view/event-list.js";
+// import SiteEventAddView from "./view/add.js";
+import SiteEventEditView from "./view/edit.js";
+import SiteEventView from "./view/event.js";
 import {generatePoint} from "./mock/point.js";
+import {render, RenderPosition} from "./utils.js";
 
-const EVENT_COUNT = 4;
+const EVENT_COUNT = 20;
 
 const points = new Array(EVENT_COUNT).fill().map(generatePoint);
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteInfoElement = siteHeaderElement.querySelector(`.trip-main`);
 
-render(siteInfoElement, createTripInfoTemplate(), `afterbegin`);
+const renderPoint = (eventListElement, point) => {
+  const eventComponent = new SiteEventView(point);
+  const eventEditComponent = new SiteEventEditView(point);
+
+  const replaceEventToEdit = () => {
+    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
+
+  const replaceEditToEvent = () => {
+    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEventToEdit();
+  });
+
+  eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceEditToEvent();
+  });
+
+  eventEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEditToEvent();
+  });
+
+  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+render(siteInfoElement, new SiteInfoView().getElement(), RenderPosition.AFTERBEGIN);
 
 const siteTripControlsElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 const siteMenuElement = siteTripControlsElement.querySelector(`h2`);
 
-render(siteMenuElement, createTripMenuTemplate(), `afterend`);
-render(siteTripControlsElement, createTripFiltersTemplate(), `beforeend`);
+render(siteMenuElement, new SiteMenuView().getElement(), RenderPosition.AFTEREND);
+render(siteTripControlsElement, new SiteFilterView().getElement(), RenderPosition.BEFOREEND);
 
 const siteMainElement = document.querySelector(`main`);
 const siteSortElement = siteMainElement.querySelector(`.trip-events`);
 
-render(siteSortElement, createTripSortTemplate(), `beforeend`);
-render(siteSortElement, createTripAddEventTemplate(points[0]), `beforeend`);
+const SiteEventList = new SiteEventListView();
+render(siteSortElement, new SiteSortView().getElement(), RenderPosition.BEFOREEND);
+render(siteSortElement, SiteEventList.getElement(), RenderPosition.BEFOREEND);
+// render(SiteEventList.getElement(), new SiteEventAddView(points[0]).getElement(), RenderPosition.BEFOREEND);
 
-const siteEventListElement = siteMainElement.querySelector(`.trip-events__list`);
-
-render(siteEventListElement, createTripEditEventTemplate(points[0]), `beforeend`);
+// render(siteEventListElement, new SiteEventEditView(points[0]).getElement(), RenderPosition.BEFOREEND);
 
 
-for (let i = 1; i < EVENT_COUNT; i++) {
-  render(siteEventListElement, createTripEventTemplate(points[i]), `beforeend`);
+for (let i = 0; i < EVENT_COUNT; i++) {
+  renderPoint(SiteEventList.getElement(), points[i]);
 }
 
 

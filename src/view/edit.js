@@ -1,5 +1,6 @@
-export const createTripEditEventTemplate = (point = {}) => {
-  const {typePoints, city, offers, price, description} = point;
+import {createElement} from "../utils.js";
+
+const createTripEditEventTemplate = ({typePoints, city, offers, price, description}) => {
 
   const createOffers = (offersAdd) => {
     const offersList = [];
@@ -135,3 +136,27 @@ export const createTripEditEventTemplate = (point = {}) => {
   </form>
 </li>`;
 };
+
+export default class SiteEventEditView {
+  constructor(point) {
+    this._point = point;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEditEventTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
