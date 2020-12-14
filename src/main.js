@@ -8,9 +8,11 @@ import SiteEventEditView from "./view/edit.js";
 import SiteEventView from "./view/event.js";
 import NoPointView from "./view/no-point.js";
 import {generatePoint} from "./mock/point.js";
-import {render, RenderPosition} from "./utils.js";
+import {render, RenderPosition, replace} from "./utils/render.js";
 
 const EVENT_COUNT = 10;
+const ESC = `Esc`;
+const ESCAPE = `Escape`;
 
 const points = new Array(EVENT_COUNT).fill().map(generatePoint);
 
@@ -22,46 +24,45 @@ const renderPoint = (eventListElement, point) => {
   const eventEditComponent = new SiteEventEditView(point);
 
   const replaceEventToEdit = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceEditToEvent = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (evt.key === ESCAPE || evt.key === ESC) {
       evt.preventDefault();
       replaceEditToEvent();
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setClickHandler(() => {
     replaceEventToEdit();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceEditToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventEditComponent.setClickHandler(() => {
     replaceEditToEvent();
   });
 
-  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
-render(siteInfoElement, new SiteInfoView().getElement(), RenderPosition.AFTERBEGIN);
+render(siteInfoElement, new SiteInfoView(), RenderPosition.AFTERBEGIN);
 
 const siteTripControlsElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 const siteMenuElement = siteTripControlsElement.querySelector(`h2`);
 
-render(siteMenuElement, new SiteMenuView().getElement(), RenderPosition.AFTEREND);
-render(siteTripControlsElement, new SiteFilterView().getElement(), RenderPosition.BEFOREEND);
+render(siteMenuElement, new SiteMenuView(), RenderPosition.AFTEREND);
+render(siteTripControlsElement, new SiteFilterView(), RenderPosition.BEFOREEND);
 
 const siteMainElement = document.querySelector(`main`);
 const siteBoardElement = siteMainElement.querySelector(`.trip-events`);
@@ -69,14 +70,14 @@ const siteBoardElement = siteMainElement.querySelector(`.trip-events`);
 const renderBoard = (boardContainer, boardEvents) => {
   const SiteEventList = new SiteEventListView();
 
-  render(boardContainer, SiteEventList.getElement(), RenderPosition.BEFOREEND);
+  render(boardContainer, SiteEventList, RenderPosition.BEFOREEND);
 
   points.forEach((boardEvent) => renderPoint(SiteEventList.getElement(), boardEvent));
 
-  if (boardEvents.length === 0) {
-    render(SiteEventList.getElement(), new NoPointView().getElement(), RenderPosition.BEFOREEND);
+  if (!boardEvents.length) {
+    render(SiteEventList, new NoPointView(), RenderPosition.BEFOREEND);
   } else {
-    render(SiteEventList.getElement(), new SiteSortView().getElement(), RenderPosition.BEFOREEND);
+    render(SiteEventList, new SiteSortView(), RenderPosition.AFTERBEGIN);
   }
 
 

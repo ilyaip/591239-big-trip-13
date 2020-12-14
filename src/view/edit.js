@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "../view/abstract.js";
 
 const createTripEditEventTemplate = ({typePoints, city, offers, price, description}) => {
 
@@ -137,26 +137,35 @@ const createTripEditEventTemplate = ({typePoints, city, offers, price, descripti
 </li>`;
 };
 
-export default class SiteEventEditView {
+export default class SiteEventEditView extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createTripEditEventTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._clickHandler);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 }
