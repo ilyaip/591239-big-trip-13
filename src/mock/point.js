@@ -1,4 +1,4 @@
-import {getRandomInteger} from "../utils.js";
+import {getRandomInteger} from "../utils/common.js";
 import {DESCRIPTIONS, TYPE_POINTS, CITIES} from "../const.js";
 
 const generateDescription = () => {

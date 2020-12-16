@@ -1,4 +1,5 @@
-import {getRandomInteger, createElement} from "../utils.js";
+import {getRandomInteger} from "../utils/common.js";
+import AbstractView from "../view/abstract.js";
 
 const createTripEventTemplate = ({typePoints, city, offers, isFavorite, price}) => {
 
@@ -54,26 +55,25 @@ const createTripEventTemplate = ({typePoints, city, offers, isFavorite, price}) 
   </li>`;
 };
 
-export default class SiteEventView {
-  constructor(point) {
-    this._point = point;
+export default class SiteEventView extends AbstractView {
 
-    this._element = null;
+  constructor(point) {
+    super();
+    this._point = point;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createTripEventTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._clickHandler);
   }
 }
