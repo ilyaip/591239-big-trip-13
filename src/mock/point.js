@@ -1,6 +1,8 @@
 import {getRandomInteger} from "../utils/common.js";
 import {DESCRIPTIONS, TYPE_POINTS, CITIES} from "../const.js";
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateDescription = () => {
 
   const randomIndex = getRandomInteger(0, DESCRIPTIONS.length - 1);
@@ -68,6 +70,7 @@ const generatePhoto = () => {
 
 export const generatePoint = () => {
   return {
+    id: generateId(),
     typePoints: generateTypePoint(),
     city: generateCity(),
     offers: generateOffers(),
